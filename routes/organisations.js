@@ -2,6 +2,7 @@ import express from "express";
 import { v4 as uuid } from "uuid";
 import authorizeToken from "../middleware/authorizeToken.js";
 import db from "../db/index.js";
+import checkOrgAccess from "../middleware/checkOrganization.js";
 const router = express.Router();
 
 // gets all your organisations the user belongs to or created. If a user is logged in properly, they can get all their organisations. They should not get another user’s organisation [PROTECTED].
@@ -40,7 +41,7 @@ router.get("/", authorizeToken, async (req, res) => {
   }
 });
 
-router.get("/:orgId", authorizeToken, async (req, res) => {
+router.get("/:orgId", authorizeToken, checkOrgAccess, async (req, res) => {
   const { orgId } = req.params;
   const {
     user: { id },

@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 import db from "../db/index.js";
 import jwt from "jsonwebtoken";
 import authorizeToken from "../middleware/authorizeToken.js";
+import generateToken from "../utils/generateToken.js";
 
 const createToken = (data) => {
   return jwt.sign(data, process.env.JWTSECRET, { expiresIn: "24h" });
@@ -38,7 +39,7 @@ router.post("/register", async (req, res) => {
     );
 
     // TODO: Create token
-    const token = createToken({
+    const token = generateToken({
       user: {
         id: userid,
         email: user.rows[0].email,
@@ -82,7 +83,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const token = createToken({
+    const token = generateToken({
       user: {
         id: rows[0].userid,
         email: rows[0].email,
@@ -102,7 +103,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// TODO: Fake endpoint needs to be destroyed 
+// TODO: Fake endpoint needs to be destroyed
 router.get("/profile", authorizeToken, async (req, res) => {
   try {
     const {
