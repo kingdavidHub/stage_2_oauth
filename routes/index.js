@@ -1,21 +1,21 @@
 import express from "express";
 import { v4 as uuid } from "uuid";
 import db from "../db/index.js";
-import jwt from "jsonwebtoken";
 import authorizeToken from "../middleware/authorizeToken.js";
 import generateToken from "../utils/generateToken.js";
-
-const createToken = (data) => {
-  return jwt.sign(data, process.env.JWTSECRET, { expiresIn: "24h" });
-};
+import { register_validation } from "../middleware/combinedValidation.js";
+import { matchedData } from "express-validator";
 
 // console.log(uuid());
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
-  const { firstName, lastName, email, password, phone } = req.body;
+router.post("/register", register_validation, async (req, res) => {
+  
+  const { firstName, lastName, email, password} = matchedData(req);
+  const { phone } = req.body;
   const orgName = `${firstName}'s Organization`;
+  
   try {
     //Create user
     const user = await db.query(
@@ -38,7 +38,6 @@ router.post("/register", async (req, res) => {
       [userid, orgid]
     );
 
-    // TODO: Create token
     const token = generateToken({
       user: {
         id: userid,
@@ -46,14 +45,14 @@ router.post("/register", async (req, res) => {
       },
     });
 
-    // TODO: Unsuccessful registration response:
-    // if (!(rows.length > 0)) {
-    //   return res.status(500).json({
-    //     status: "Bad request",
-    //     message: "Registration unsuccessful",
-    //     statusCode: 400,
-    //   });
-    // }
+    // unsuccessful registration
+    if (!(user.rows.length > 0)) {
+      return res.status(400).json({
+        status: "Bad request",
+        message: "Registration unsuccessful",
+        statusCode: 400,
+      });
+    }
 
     return res.status(201).json({
       status: "success",
@@ -64,7 +63,13 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.error('Registration error:', e);
+    // res.status(500).json({ message: 'Registration failed' });
+    return res.status(500).json({
+      status: "Internal server error",
+      message: error.message,
+      statusCode: 500,
+    })
   }
 });
 
