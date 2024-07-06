@@ -19,22 +19,21 @@ app.get("/", async (req, res) => {
     message: "Hello, World!, HNG stage 2 OAuth",
   });
 });
-
-app.use("/auth", createRoute);
-app.use("/api/users", userRoute);
-app.use("/api/organisations", organizationRoute);
-
 // test endpoint
-app.get("/test", async(req, res) => {
+app.get("/test", async (req, res) => {
   try {
     const { rows } = await db.query("SELECT * FROM users");
     return res.status(200).json({
       data: rows,
     });
   } catch (error) {
-    res.status(500).json({ error });
+    return res.status(500).json({ error });
   }
 });
+
+app.use("/auth", createRoute);
+app.use("/api/users", userRoute);
+app.use("/api/organisations", organizationRoute);
 
 app.get("*", (req, res) => {
   return res.status(404).json({
