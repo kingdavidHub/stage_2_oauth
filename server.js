@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config({ path: `${process.cwd()}/.ENV` });
 import express from "express";
-import db from "./db/index.js";
 import createRoute from "./routes/index.js";
 import userRoute from "./routes/user.js";
 import organizationRoute from "./routes/organisations.js";
