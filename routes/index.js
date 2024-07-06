@@ -1,9 +1,10 @@
 import express from "express";
+import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import db from "../db/index.js";
 import authorizeToken from "../middleware/authorizeToken.js";
 import generateToken from "../utils/generateToken.js";
-import { register_validation } from "../middleware/combinedValidation.js";
+import { login_validation, register_validation } from "../middleware/combinedValidation.js";
 import { matchedData } from "express-validator";
 
 // console.log(uuid());
@@ -12,15 +13,19 @@ const router = express.Router();
 
 router.post("/register", register_validation, async (req, res) => {
   
-  const { firstName, lastName, email, password} = matchedData(req);
+  const { firstName, lastName, email, password: plainTextPassword } = matchedData(req);
   const { phone } = req.body;
   const orgName = `${firstName}'s Organization`;
-  
+
+  const saltRounds = 10
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const hashPassword =bcrypt.hashSync(plainTextPassword, salt);
+
   try {
     //Create user
     const user = await db.query(
       "INSERT INTO users (userId, firstName, lastName, email, password, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [uuid(), firstName, lastName, email, password, phone]
+      [uuid(), firstName, lastName, email, hashPassword, phone]
     );
 
     //Create organization
@@ -73,14 +78,15 @@ router.post("/register", register_validation, async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+router.post("/login",login_validation, async (req, res) => {
+  const { email, password: plainTextPassword } = req.body;
 
   try {
     const { rows } = await db.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
-    if (!(rows.length > 0) || rows[0].password !== password) {
+
+    if (!(rows.length > 0) || (!bcrypt.compareSync(plainTextPassword, rows[0].password))) {
       return res.status(401).json({
         status: "Bad request",
         message: "Authentication failed",

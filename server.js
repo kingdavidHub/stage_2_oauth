@@ -15,14 +15,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
-  try {
-    const { rows } = await db.query("SELECT * FROM users");
-    return res.status(200).json({
-      data: rows,
-    });
-  } catch (error) {
-    console.log(error);
-  }
+  return res.status(200).json({
+    message: "Hello, World!, HNG stage 2 OAuth",
+  });
 });
 
 app.use("/auth", createRoute);
