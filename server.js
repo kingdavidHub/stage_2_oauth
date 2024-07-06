@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", async (req, res) => {
   return res.status(200).json({
     message: "Hello, World!, HNG stage 2 OAuth",
+    date: new Date().toDateString(),
   });
 });
 
