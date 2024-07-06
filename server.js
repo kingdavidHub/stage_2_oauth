@@ -25,9 +25,9 @@ app.use("/api/users", userRoute);
 app.use("/api/organisations", organizationRoute);
 
 // test endpoint
-app.get("/test", (req, res) => {
+app.get("/test", async(req, res) => {
   try {
-    const { rows } = db.query("SELECT * FROM users");
+    const { rows } = await db.query("SELECT * FROM users");
     return res.status(200).json({
       data: rows,
     });
