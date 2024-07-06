@@ -68,8 +68,6 @@ router.post("/register", register_validation, async (req, res) => {
       },
     });
   } catch (error) {
-    // console.error('Registration error:', e);
-    // res.status(500).json({ message: 'Registration failed' });
     return res.status(500).json({
       status: "Internal server error",
       message: error.message,
@@ -110,7 +108,11 @@ router.post("/login",login_validation, async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      status: "Internal server error",
+      message: error.message,
+      statusCode: 500,
+    })
   }
 });
 

@@ -40,7 +40,6 @@ describe("register endpoint /auth/register", () => {
       phone: "123456789",
     };
 
-
     // 3 queries should be called for user, organization and user_organization so we wont have 500 error
     pool.query
       .mockResolvedValueOnce({ rows: [{ userid: "1", ...userData }] })
@@ -86,6 +85,11 @@ describe("register endpoint /auth/register", () => {
   });
 
   it("should return error for database constraint violations", async () => {
+    // remove default console error calls
+    const originalConsoleError = console.error;
+
+    console.error = jest.fn();
+
     pool.query.mockRejectedValueOnce(
       new Error("duplicate key value violates unique constraint")
     );
@@ -93,7 +97,7 @@ describe("register endpoint /auth/register", () => {
     const userData = {
       firstName: "John",
       lastName: "Doe",
-      email: "john.doe@example.com",
+      email: "john.oe@example.com",
       password: "password123",
       phone: "123456789",
     };
@@ -102,8 +106,11 @@ describe("register endpoint /auth/register", () => {
       .post("/auth/register")
       .send(userData)
       .expect(500);
+
     expect(response.body.message).toBe(
       "duplicate key value violates unique constraint"
     );
+
+    console.error = originalConsoleError;
   });
 });
