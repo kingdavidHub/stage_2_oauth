@@ -5,7 +5,6 @@ import createRoute from "./routes/index.js";
 import userRoute from "./routes/user.js";
 import organizationRoute from "./routes/organisations.js";
 import morgan from "morgan";
-import db from "./db/index.js";
 
 const app = express();
 
