@@ -16,7 +16,13 @@ router.get("/:id", authorizeToken, async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: "User retrieved successfully",
-      data: "hello"
+      data: {
+         userId: rows[0].userid,
+        firstName: rows[0].firstname,
+        lastName: rows[0].lastname,
+        email: rows[0].email,
+        phone: rows[0].phone,
+        }
       });
       
   } catch (error) {
