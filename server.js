@@ -2,6 +2,10 @@ import dotenv from "dotenv";
 dotenv.config({ path: `${process.cwd()}/.ENV` });
 import express from "express";
 import morgan from "morgan";
+
+import createRoute from "./routes/index.js";
+import userRoute from "./routes/user.js";
+import organizationRoute from "./routes/organisations.js";
 //import mainRoute from "./routes/routes.js";
 
 const app = express();
