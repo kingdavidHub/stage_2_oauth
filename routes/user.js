@@ -11,6 +11,10 @@ router.get("/:id", authorizeToken, async (req, res) => {
   try {
     const { rows } = await db.query("SELECT * FROM users WHERE userid = $1", [id]);
 
+    delete rows[0].password
+
+
+
     return res.status(200).json({
       status: "success",
       message: "User retrieved successfully",
