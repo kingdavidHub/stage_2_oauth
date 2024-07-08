@@ -66,6 +66,8 @@ router.post("/register", register_validation, async (req, res) => {
       });
     }
 
+    delete user.rows[0].password;
+
     return res.status(201).json({
       status: "success",
       message: "Registration successful",
@@ -108,6 +110,8 @@ router.post("/login", login_validation, async (req, res) => {
         email: rows[0].email,
       },
     });
+
+    delete rows[0].password;
 
     return res.status(200).json({
       status: "success",
