@@ -18,7 +18,7 @@ app.get("/", async (req, res) => {
   });
 });
 
-//app.use("/api", mainRoute);
+app.use("/api", mainRoute);
 // app.use("/api/auth", createRoute);
 // app.use("/api/users", userRoute);
 // app.use("/api/organisations", organizationRoute);
