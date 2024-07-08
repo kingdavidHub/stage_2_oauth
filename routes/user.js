@@ -17,7 +17,8 @@ router.get("/:id", authorizeToken, async (req, res) => {
       status: "success",
       message: "User retrieved successfully",
       data: "hello"
-      );
+      });
+      
   } catch (error) {
     return res.status(500).json({
       error: error.message
