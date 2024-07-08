@@ -6,7 +6,7 @@ import organizationRoute from "../routes/organisations.js";
 const router = express.Router();
 
 router.use("/auth", createRoute);
-router.use("/auth", userRoute);
-router.use("/auth", organizationRoute);
+router.use("/", userRoute);
+router.use("/", organizationRoute);
 
 export default router;
