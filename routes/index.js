@@ -148,26 +148,5 @@ router.post("/login", login_validation, async (req, res) => {
   }
 });
 
-// TODO: Fake endpoint needs to be destroyed
-router.get("/profile", authorizeToken, async (req, res) => {
-  try {
-    const {
-      user: { id },
-    } = req.user;
-    const { rows } = await db.query("SELECT * FROM users WHERE userid = $1", [
-      id,
-    ]);
-
-    return res.status(200).json({
-      status: "success",
-      message: "Profile retrieved successfully",
-      data: {
-        user: rows[0],
-      },
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
 
 export default router;

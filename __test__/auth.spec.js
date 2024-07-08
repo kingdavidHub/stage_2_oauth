@@ -20,7 +20,7 @@ jest.mock("pg", () => {
 
 const pool = new Pool();
 
-describe("register endpoint /auth/register", () => {
+describe("register endpoint api/auth/register", () => {
   let app;
 
   beforeAll(() => {
@@ -42,14 +42,14 @@ describe("register endpoint /auth/register", () => {
 
     // 3 queries should be called for user, organization and user_organization so we wont have 500 error
     pool.query
-      .mockResolvedValueOnce({ rows: [{ userid: "1", ...userData }] })
+      .mockResolvedValueOnce({ rows: [{ userId: "1", ...userData }] })
       .mockResolvedValueOnce({
         rows: [{ orgid: "1", name: "John's Organisation", description: null }],
       })
       .mockResolvedValueOnce({});
 
     const response = await request(app)
-      .post("/auth/register")
+      .post("/api/auth/register")
       .send(userData)
       .expect(201);
 
@@ -59,10 +59,10 @@ describe("register endpoint /auth/register", () => {
 
     // getting user successfully
     // console.log(user);
-
+    
     expect(user).toEqual(
       expect.objectContaining({
-        userid: "1",
+        userId: "1",
         firstName: "John",
         lastName: "Doe",
         email: "john.doe@example.com",
@@ -76,7 +76,7 @@ describe("register endpoint /auth/register", () => {
 
   it("should return validation error for missing fields", async () => {
     const response = await request(app)
-      .post("/auth/register")
+      .post("/api/auth/register")
       .send({ firstName: "John" })
       .expect(422);
     expect(response.body.status).toBe(
@@ -103,7 +103,7 @@ describe("register endpoint /auth/register", () => {
     };
 
     const response = await request(app)
-      .post("/auth/register")
+      .post("api/auth/register")
       .send(userData)
       .expect(500);
 

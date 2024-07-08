@@ -1,10 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config({ path: `${process.cwd()}/.ENV` });
 import express from "express";
-import createRoute from "./routes/index.js";
-import userRoute from "./routes/user.js";
-import organizationRoute from "./routes/organisations.js";
 import morgan from "morgan";
+import mainRoute from "./routes/routes.js";
 
 const app = express();
 
@@ -20,9 +18,10 @@ app.get("/", async (req, res) => {
   });
 });
 
-app.use("/auth", createRoute);
-app.use("/api/users", userRoute);
-app.use("/api/organisations", organizationRoute);
+app.use("/api", mainRoute);
+// app.use("/api/auth", createRoute);
+// app.use("/api/users", userRoute);
+// app.use("/api/organisations", organizationRoute);
 
 app.get("*", (req, res) => {
   return res.status(404).json({
