@@ -3,10 +3,10 @@ export const registerValidationSchema = {
     notEmpty: {
       errorMessage: "firstName is required",
     },
-    isLength: {
+    /*isLength: {
       options: { min: 3 },
       errorMessage: "firstName must be at least 3 characters long",
-    },
+    },*/
     isString: {
       errorMessage: "firstName must be a string",
     },
@@ -15,10 +15,10 @@ export const registerValidationSchema = {
     notEmpty: {
       errorMessage: "lastName is required",
     },
-    isLength: {
+    /*isLength: {
       options: { min: 3 },
       errorMessage: "lastName must be at least 3 characters long",
-    },
+    },*/
     isString: {
       errorMessage: "lastName must be a string",
     },
@@ -27,10 +27,10 @@ export const registerValidationSchema = {
     notEmpty: {
       errorMessage: "password is required",
     },
-    isLength: {
+    /*isLength: {
       options: { min: 3, max: 15 },
       errorMessage: "password must be at least 3 characters long",
-    },
+    },*/
     isString: {
       errorMessage: "password must be a string",
     },
