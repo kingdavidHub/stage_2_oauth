@@ -66,13 +66,12 @@ router.post("/register", register_validation, async (req, res) => {
       });
     }
 
-    delete user.rows[0].password;
     const {
-      userid: userId,
-      firstname: firstName,
-      lastname: lastName,
-      email,
-      phone,
+      userid: user_id,
+      firstname,
+      lastname,
+      email: userEmail,
+      phone: my_phone,
     } = user.rows[0];
 
     return res.status(201).json({
@@ -81,11 +80,11 @@ router.post("/register", register_validation, async (req, res) => {
       data: {
         accessToken: token,
         user: {
-          userId,
-          firstName,
-          lastName,
-          email,
-          phone,
+          userId: user_id,
+          firstName: firstname,
+          lastName: lastname,
+          email: userEmail,
+          phone: my_phone,
         },
       },
     });
@@ -124,15 +123,7 @@ router.post("/login", login_validation, async (req, res) => {
       },
     });
 
-    delete rows[0].password;
-
-    const {
-      userid: userId,
-      firstname: firstName,
-      lastname: lastName,
-      email,
-      phone,
-    } = rows[0];
+    const { userid, firstname, lastname, email: userEmail, phone } = rows[0];
 
     return res.status(200).json({
       status: "success",
@@ -140,10 +131,10 @@ router.post("/login", login_validation, async (req, res) => {
       data: {
         accessToken: token,
         user: {
-          userId,
-          firstName,
-          lastName,
-          email,
+          userId: userid,
+          firstName: firstname,
+          lastName: lastname,
+          email: userEmail,
           phone,
         },
       },
