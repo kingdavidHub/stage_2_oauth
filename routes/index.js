@@ -67,13 +67,26 @@ router.post("/register", register_validation, async (req, res) => {
     }
 
     delete user.rows[0].password;
+    const {
+      userid: userId,
+      firstname: firstName,
+      lastname: lastName,
+      email,
+      phone,
+    } = user.rows[0];
 
     return res.status(201).json({
       status: "success",
       message: "Registration successful",
       data: {
         accessToken: token,
-        user: user.rows[0],
+        user: {
+          userId,
+          firstName,
+          lastName,
+          email,
+          phone,
+        },
       },
     });
   } catch (error) {
@@ -113,12 +126,26 @@ router.post("/login", login_validation, async (req, res) => {
 
     delete rows[0].password;
 
+    const {
+      userid: userId,
+      firstname: firstName,
+      lastname: lastName,
+      email,
+      phone,
+    } = rows[0];
+
     return res.status(200).json({
       status: "success",
       message: "Login successful",
       data: {
         accessToken: token,
-        user: rows[0],
+        user: {
+          userId,
+          firstName,
+          lastName,
+          email,
+          phone,
+        },
       },
     });
   } catch (error) {
