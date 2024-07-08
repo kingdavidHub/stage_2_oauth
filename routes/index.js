@@ -38,7 +38,7 @@ router.post("/register", register_validation, async (req, res) => {
     //Create organization
     const organization = await db.query(
       "INSERT INTO organization(orgId, name, description) VALUES ($1, $2, $3) RETURNING *",
-      [uuid(), orgName, "dummy description"]
+      [uuid(), orgName, `${firstName}'s Organization`]
     );
 
     // MANY TO MANY RELATIONSHIP between userId and orId  to user_organization
