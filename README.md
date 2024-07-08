@@ -30,9 +30,6 @@ Authenticates a user by checking the provided email and password against the dat
 - `email`
 - `password`
 
-### `GET /auth/profile`
-
-Retrieves the user's profile information. This route is protected and requires a valid JWT token in the `Authorization` header.
 
 ## User Routes (`/api/users`)
 
