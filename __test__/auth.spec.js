@@ -20,7 +20,7 @@ jest.mock("pg", () => {
 
 const pool = new Pool();
 
-describe("register endpoint api/auth/register", () => {
+describe("register endpoint auth/register", () => {
   let app;
 
   beforeAll(() => {
@@ -49,7 +49,7 @@ describe("register endpoint api/auth/register", () => {
       .mockResolvedValueOnce({});
 
     const response = await request(app)
-      .post("/api/auth/register")
+      .post("/auth/register")
       .send(userData)
       .expect(201);
 
@@ -57,9 +57,6 @@ describe("register endpoint api/auth/register", () => {
       data: { user, accessToken },
     } = response.body;
 
-    // getting user successfully
-    // console.log(user);
-    
     expect(user).toEqual(
       expect.objectContaining({
         userId: "1",
@@ -76,7 +73,7 @@ describe("register endpoint api/auth/register", () => {
 
   it("should return validation error for missing fields", async () => {
     const response = await request(app)
-      .post("/api/auth/register")
+      .post("/auth/register")
       .send({ firstName: "John" })
       .expect(422);
     expect(response.body.status).toBe(
@@ -103,7 +100,7 @@ describe("register endpoint api/auth/register", () => {
     };
 
     const response = await request(app)
-      .post("api/auth/register")
+      .post("/auth/register")
       .send(userData)
       .expect(500);
 
@@ -114,3 +111,29 @@ describe("register endpoint api/auth/register", () => {
     console.error = originalConsoleError;
   });
 });
+
+// TODO: when user.rows[0] is set like this it passes the test but it is affecting only should register user with default organisation test
+// return res.status(201).json({
+//   status: "success",
+//   message: "Registration successful",
+//   data: {
+//     accessToken: token,
+//     user: user.rows[0],
+//   },
+// });
+
+// TODO: when it is set like this it fails the test
+// return res.status(201).json({
+//   status: "success",
+//   message: "Registration successful",
+//   data: {
+//     accessToken: token,
+//     user: {
+//       userId: user_id,
+//       firstName: firstname,
+//       lastName: lastname,
+//       email: userEmail,
+//       phone: my_phone,
+//     },
+//   },
+// });

@@ -2,15 +2,12 @@ import express from "express";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import db from "../db/index.js";
-import authorizeToken from "../middleware/authorizeToken.js";
 import generateToken from "../utils/generateToken.js";
 import {
   login_validation,
   register_validation,
 } from "../middleware/combinedValidation.js";
 import { matchedData } from "express-validator";
-
-// console.log(uuid());
 
 const router = express.Router();
 
@@ -29,6 +26,18 @@ router.post("/register", register_validation, async (req, res) => {
   const hashPassword = bcrypt.hashSync(plainTextPassword, salt);
 
   try {
+
+    // CHECK FOR EXISTING USER 
+    const emailExist = await db.query("SELECT email from users where email = $1", [email]);
+
+    if(emailExist.rows.length > 0) {
+      return res.status(400).json({
+        status: "Bad request",
+        message: "User already exists",
+        statusCode: 400,
+      });
+    }
+    
     //Create user
     const user = await db.query(
       "INSERT INTO users (userId, firstName, lastName, email, password, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",

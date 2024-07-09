@@ -2,7 +2,9 @@ import dotenv from "dotenv";
 dotenv.config({ path: `${process.cwd()}/.ENV` });
 import express from "express";
 import db from "./db/index.js";
-import mainRoute from "./routes/routes.js";
+import createRoute from "./routes/index.js";
+import userRoute from "./routes/user.js";
+import organizationRoute from "./routes/organisations.js";
 import morgan from "morgan";
 
 export function createApp() {
@@ -24,7 +26,9 @@ export function createApp() {
     }
   });
 
-  app.use("/api", mainRoute);
+  app.use("/auth", createRoute);
+  app.use("/api/users", userRoute);
+  app.use("/api/organisations", organizationRoute);
 
   app.get("*", (req, res) => {
     return res.status(404).json({
@@ -40,7 +44,6 @@ export function createApp() {
     });
     next();
   });
-
 
   return app;
 }
