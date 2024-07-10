@@ -8,36 +8,43 @@ import {
   register_validation,
 } from "../middleware/combinedValidation.js";
 import { matchedData } from "express-validator";
+import catchAsync from "../utils/catchAsync.js";
+import AppError from "../utils/appError.js";
 
 const router = express.Router();
 
-router.post("/register", register_validation, async (req, res) => {
-  const {
-    firstName,
-    lastName,
-    email,
-    password: plainTextPassword,
-  } = matchedData(req);
-  const { phone } = req.body;
-  const orgName = `${firstName}'s Organization`;
+router.post(
+  "/register",
+  register_validation,
+  catchAsync(async (req, res) => {
+    const {
+      firstName,
+      lastName,
+      email,
+      password: plainTextPassword,
+    } = matchedData(req);
+    const { phone } = req.body;
+    const orgName = `${firstName}'s Organization`;
 
-  const saltRounds = 10;
-  const salt = bcrypt.genSaltSync(saltRounds);
-  const hashPassword = bcrypt.hashSync(plainTextPassword, salt);
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashPassword = bcrypt.hashSync(plainTextPassword, salt);
 
-  try {
+    // CHECK FOR EXISTING USER
+    const emailExist = await db.query(
+      "SELECT email from users where email = $1",
+      [email]
+    );
 
-    // CHECK FOR EXISTING USER 
-    const emailExist = await db.query("SELECT email from users where email = $1", [email]);
-
-    if(emailExist.rows.length > 0) {
-      return res.status(400).json({
-        status: "Bad request",
-        message: "User already exists",
-        statusCode: 400,
-      });
+    if (emailExist.rows.length > 0) {
+      // return res.status(400).json({
+      //   status: "Bad request",
+      //   message: "User already exists",
+      //   statusCode: 400,
+      // });
+      throw new AppError("User already exists", 400);
     }
-    
+
     //Create user
     const user = await db.query(
       "INSERT INTO users (userId, firstName, lastName, email, password, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
@@ -68,11 +75,7 @@ router.post("/register", register_validation, async (req, res) => {
 
     // unsuccessful registration
     if (!(user.rows.length > 0)) {
-      return res.status(400).json({
-        status: "Bad request",
-        message: "Registration unsuccessful",
-        statusCode: 400,
-      });
+      throw new AppError("Registration unsuccessful", 400);
     }
 
     const {
@@ -97,19 +100,15 @@ router.post("/register", register_validation, async (req, res) => {
         },
       },
     });
-  } catch (error) {
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-      statusCode: 500,
-    });
-  }
-});
+  })
+);
 
-router.post("/login", login_validation, async (req, res) => {
-  const { email, password: plainTextPassword } = matchedData(req);
+router.post(
+  "/login",
+  login_validation,
+  catchAsync(async (req, res) => {
+    const { email, password: plainTextPassword } = matchedData(req);
 
-  try {
     const { rows } = await db.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
@@ -118,11 +117,7 @@ router.post("/login", login_validation, async (req, res) => {
       !(rows.length > 0) ||
       !bcrypt.compareSync(plainTextPassword, rows[0].password)
     ) {
-      return res.status(401).json({
-        status: "Bad request",
-        message: "Authentication failed",
-        statusCode: 401,
-      });
+      throw new AppError("Authentication failed", 401);
     }
 
     const token = generateToken({
@@ -148,14 +143,7 @@ router.post("/login", login_validation, async (req, res) => {
         },
       },
     });
-  } catch (error) {
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-      statusCode: 500,
-    });
-  }
-});
-
+  })
+);
 
 export default router;
