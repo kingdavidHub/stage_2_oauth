@@ -42,7 +42,8 @@ app.use(
     // throw new Error("Route not found " + req.baseUrl);
 
     // STEP 3 using the catchAsync wrapper and Custom error handler
-    throw new AppError(`Can't find ${req.originalUrl} on this server`, 404);
+    const url = req.baseUrl || req.originalUrl;
+    throw new AppError(`Can't find ${url} on this server`, 404);
 
     // return res.status(404).json({
     //   message: "Route not found " + req.baseUrl,
